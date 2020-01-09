@@ -8,12 +8,12 @@
 			<div class="modal-body">
 				<form wire:submit.prevent="create">
 					<div class="form-group">
-						<label>Name</label>
+						<label wire:dirty.class="text-success" wire:target="name">Name</label>
 						<input type="text" class="form-control" wire:model="name">
 					</div>
 					@error('name') <p class="text-danger">{{ $message }}</p> @enderror
 					<div class="form-group">
-						<label>Detail</label>
+						<label wire:dirty.class="text-success" wire:target="detail">Detail</label>
 						<input type="text" class="form-control" wire:model="detail">
 					</div>
 					@error('detail') <p class="text-danger">{{ $message }}</p> @enderror
@@ -60,10 +60,16 @@
 @endif
 <div class="container">
 	<h1 class="text-center">Todo</h1>
-	<div wire:poll.1s>
-		<p>Current time: {{ now() }}</p>
+	<div wire:offline>
+		<p class="text-warning">You are now offline.</p>
+	</div>
+	<div wire:poll.60s>
+		<p>Current time: {{ date("H:i d-m-Y") }}</p>
 	</div>
 	<button class="btn btn-primary" wire:click="$emit('showModal')">Add</button>
+	<div class="spinner-border text-primary d-none" wire:loading.class="d-block" role="status">
+		<span class="sr-only">Loading...</span>
+	</div>
 	<table class="table table-hover">
 		<thead>
 			<tr>
@@ -83,7 +89,7 @@
 					<div class="btn-group" role="group" aria-label="Basic example">
 						<button type="button" wire:click="edit({{ $todo->id }})" 
 							class="btn btn-warning">Edit</button>
-							<button type="button" class="btn btn-danger"
+							<button type="button" onclick="confirm('Are you sure ?')" class="btn btn-danger"
 							wire:click="delete({{ $todo->id }})">Delete</button>
 						</div>
 					</td>
