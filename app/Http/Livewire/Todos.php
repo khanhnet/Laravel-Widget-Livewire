@@ -12,8 +12,12 @@ class Todos extends Component
 	public $name;
 	public $detail;
 	public $todo;
+	public $search;
+	public $perPage=5;
 	public $isOpen = 0;
 	public $isEditOpen = 0;
+	public $readyToLoad = false;
+	public $currentPage = 1;
 
 	protected $listeners = [
 		'showModal' => 'open',
@@ -21,7 +25,11 @@ class Todos extends Component
 		'showEditModal' => 'editOpen',
 		'closeEditModal' => 'editClose'
 	];
-
+	
+	public function increment()
+	{
+		$this->currentPage=2;
+	}
 	public function open()
 	{
 		$this->isOpen = 1;
@@ -77,8 +85,10 @@ class Todos extends Component
 	}
 	public function render()
 	{
+		$todos=Todo::paginate($this->perPage);
+		$this->currentPage=$todos->currentPage();
 		return view('livewire.todos',[
-			'todos' => Todo::paginate(5),
+			'todos' => $todos,
 		]);
 	}
 }

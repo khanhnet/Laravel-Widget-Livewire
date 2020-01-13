@@ -67,6 +67,7 @@
 		<p>Current time: {{ date("H:i d-m-Y") }}</p>
 	</div>
 	<button class="btn btn-primary" wire:click="$emit('showModal')">Add</button>
+	<p></p>
 	<div class="spinner-border text-primary d-none" wire:loading.class="d-block" role="status">
 		<span class="sr-only">Loading...</span>
 	</div>
@@ -97,5 +98,34 @@
 				@endforeach
 			</tbody>
 		</table>
-		{{ $todos->links() }}
+		<div class="row">
+			<div class="col">
+				{{ $todos->links() }}
+			</div>
+			<div class="col text-right text-muted">
+				Showing {{ $todos->firstItem() }} to {{ $todos->lastItem() }} out of {{ $todos->total() }} results
+			</div>
+		</div>
 	</div>
+
+	<script type="text/javascript">
+		document.addEventListener("DOMContentLoaded", function(event) {
+			window.livewire.beforeDomUpdate(() => {
+				var currentPage = @this.get('currentPage')
+				history.pushState({}, "", "?page="+currentPage+"");
+			});
+		});
+		window.onload = function()
+		{
+			var urlCurrent = location.href;
+			var lastPage={{ $todos->lastPage() }};
+			if(urlCurrent.search('page=')!=-1){
+				if(urlCurrent.charAt(urlCurrent.search('page=')+5)<lastPage+1){
+					$('.page-link')[urlCurrent.charAt(urlCurrent.search('page=')+5)].click();
+				}else {
+					alert('Page not found');
+					$('.page-link')[lastPage].click();
+				}
+			}
+		};
+	</script>
